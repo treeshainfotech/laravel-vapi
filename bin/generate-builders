@@ -1,0 +1,23 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use TreeshaInfotech\Vapi\Builders\Generator\BuilderGenerator;
+
+require __DIR__.'/../vendor/autoload.php';
+
+$generator = new BuilderGenerator;
+$directory = __DIR__.'/../src/Builders';
+
+foreach (glob($directory.'/*.php') ?: [] as $stale) {
+    unlink($stale);
+}
+
+$sources = $generator->generateAll();
+foreach ($sources as $builder => $source) {
+    file_put_contents($directory.'/'.$builder.'.php', $source);
+    echo 'generated '.$builder.PHP_EOL;
+}
+
+echo count($sources).' builders generated from '.count($generator->targets()).' candidate DTOs.'.PHP_EOL;

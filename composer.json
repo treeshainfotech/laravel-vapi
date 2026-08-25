@@ -1,0 +1,78 @@
+{
+    "name": "treeshainfotech/laravel-vapi",
+    "description": "A Laravel wrapper for the Vapi PHP server SDK — config, facade, webhooks, and testing fakes.",
+    "keywords": [
+        "laravel",
+        "vapi",
+        "voice",
+        "ai",
+        "sdk"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Treesha Infotech"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "guzzlehttp/guzzle": "^7.8",
+        "illuminate/contracts": "^12.0 || ^13.0",
+        "illuminate/support": "^12.0 || ^13.0",
+        "vapi/vapi": "^2.0"
+    },
+    "require-dev": {
+        "larastan/larastan": "^3.0",
+        "laravel/pint": "^1.24",
+        "orchestra/testbench": "^10.0 || ^11.0",
+        "pestphp/pest": "^4.0 || ^5.0",
+        "pestphp/pest-plugin-type-coverage": "^4.0 || ^5.0",
+        "phpstan/phpstan-strict-rules": "^2.0"
+    },
+    "suggest": {
+        "phpunit/phpunit": "Required to use the Vapi::fake() test assertions."
+    },
+    "autoload": {
+        "psr-4": {
+            "TreeshaInfotech\\Vapi\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TreeshaInfotech\\Vapi\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "TreeshaInfotech\\Vapi\\VapiServiceProvider"
+            ],
+            "aliases": {
+                "Vapi": "TreeshaInfotech\\Vapi\\Facades\\Vapi"
+            }
+        }
+    },
+    "scripts": {
+        "analyse": "phpstan analyse --memory-limit=1G",
+        "build:builders": "@php bin/generate-builders",
+        "check": [
+            "@lint",
+            "@analyse",
+            "@test:types",
+            "@test"
+        ],
+        "fix": "pint",
+        "lint": "pint --test",
+        "test": "pest",
+        "test:types": "pest --type-coverage --min=100"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
+        },
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

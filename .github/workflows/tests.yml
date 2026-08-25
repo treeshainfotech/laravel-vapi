@@ -1,0 +1,50 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["8.3", "8.4", "8.5"]
+        laravel: ["12", "13"]
+        include:
+          - laravel: "12"
+            testbench: "10.*"
+          - laravel: "13"
+            testbench: "11.*"
+
+    name: PHP ${{ matrix.php }} / Laravel ${{ matrix.laravel }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: Install dependencies
+        run: |
+          composer require "illuminate/contracts:^${{ matrix.laravel }}.0" "illuminate/support:^${{ matrix.laravel }}.0" --no-interaction --no-update
+          composer require "orchestra/testbench:${{ matrix.testbench }}" --dev --no-interaction --no-update
+          composer update --prefer-dist --no-interaction --no-progress
+
+      - name: Lint (Pint)
+        run: composer lint
+
+      - name: Static analysis (PHPStan)
+        run: composer analyse
+
+      - name: Type coverage
+        run: composer test:types
+
+      - name: Tests (Pest)
+        run: composer test
