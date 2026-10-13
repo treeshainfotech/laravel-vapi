@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Support for `guzzlehttp/guzzle` 8 alongside 7, via `^7.8 || ^8.0`. Laravel 13 accepts
+  `^7.8.2 || ^8.0`, so applications on Laravel 13 can now run Guzzle 8; Laravel 12 caps
+  the dependency at `^7.8.2` and continues to resolve to Guzzle 7.
+- `SECURITY.md` describing the private disclosure process, the supported versions, and
+  which parts of the package are in scope.
+
 ## [0.1.1] - 2026-10-13
 
 ### Added
