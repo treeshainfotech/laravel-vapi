@@ -257,7 +257,7 @@ Every verified webhook dispatches `WebhookReceived`. Common message types also d
 | `WebhookReceived` | all | `?JsonSerializableType $message` |
 | `EndOfCallReportReceived` | `end-of-call-report` | `ServerMessageEndOfCallReport $report` |
 | `StatusUpdateReceived` | `status-update` | `ServerMessageStatusUpdate $statusUpdate` |
-| `TranscriptReceived` | `transcript` | `ServerMessageTranscript $transcript` |
+| `TranscriptReceived` | `transcript`, `transcript[transcriptType="final"]` | `ServerMessageTranscript $transcript` |
 | `ToolCallsReceived` | `tool-calls` | `ServerMessageToolCalls $toolCalls` |
 
 Every event also carries `array $payload` (the raw decoded body) and `string $type`. Messages with types the SDK doesn't know yet still dispatch `WebhookReceived` with the raw payload and `message: null` — new Vapi message types never break your endpoint.
@@ -271,6 +271,8 @@ Event::listen(function (EndOfCallReportReceived $event): void {
 ```
 
 Listeners can use queue attributes on Laravel 13 (`#[Tries(3)]`, `#[Backoff(60)]`, …).
+
+> **Transcripts arrive under two discriminators.** Vapi sends partial transcripts as `transcript` and final ones as `transcript[transcriptType="final"]`. Both dispatch `TranscriptReceived`, so listening for the event is always safe. Only if you compare the raw `$event->type` string do you need both — `ServerMessageTypeMap::TRANSCRIPT` and `ServerMessageTypeMap::TRANSCRIPT_FINAL`.
 
 > The package deserializes messages by their `message.type` discriminator into the correct SDK class itself. The SDK's own `ServerMessage` union resolves every payload to its first arm and is not used.
 
@@ -354,6 +356,7 @@ Validated against the live OpenAPI spec (`https://api.vapi.ai/api-json`); these 
 - ~58 API operations have no SDK client (Knowledge Bases V2, Simulations, Reporting Boards, Campaigns V2, call recordings/logs). Use [`Vapi::raw()`](#raw-endpoint-access).
 - Two webhook message types (`call.artifact.upload`, `campaign.predial`) aren't modeled yet — they arrive as untyped `WebhookReceived` events.
 - `CreateCallDto` lacks the API's `assistantVersion` field — pass it via the `$options['bodyProperties']` argument the SDK's client methods accept.
+- Credential fields are typed non-nullable, so a response containing a redacted secret fails to decode ([VapiAI/server-sdk-php#4](https://github.com/VapiAI/server-sdk-php/issues/4)). Reach the endpoint with [`Vapi::raw()`](#raw-endpoint-access) until it is fixed.
 - The SDK repository currently ships without a license file.
 
 ## License

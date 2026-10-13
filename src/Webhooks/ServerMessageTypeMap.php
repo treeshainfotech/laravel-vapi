@@ -50,6 +50,14 @@ final class ServerMessageTypeMap
 
     public const string TRANSCRIPT = 'transcript';
 
+    /**
+     * Vapi sends final transcripts under their own discriminator, not under
+     * TRANSCRIPT. Both deserialize to ServerMessageTranscript and both raise
+     * TranscriptReceived, so match on the event — or on BOTH constants when
+     * you compare the raw `message.type` string.
+     */
+    public const string TRANSCRIPT_FINAL = 'transcript[transcriptType="final"]';
+
     private const array MAP = [
         'assistant-request' => ServerMessageAssistantRequest::class,
         'assistant.speechStarted' => ServerMessageAssistantSpeech::class,
@@ -73,7 +81,7 @@ final class ServerMessageTypeMap
         self::STATUS_UPDATE => ServerMessageStatusUpdate::class,
         self::TOOL_CALLS => ServerMessageToolCalls::class,
         self::TRANSCRIPT => ServerMessageTranscript::class,
-        'transcript[transcriptType="final"]' => ServerMessageTranscript::class,
+        self::TRANSCRIPT_FINAL => ServerMessageTranscript::class,
         'transfer-destination-request' => ServerMessageTransferDestinationRequest::class,
         'transfer-update' => ServerMessageTransferUpdate::class,
         'user-interrupted' => ServerMessageUserInterrupted::class,

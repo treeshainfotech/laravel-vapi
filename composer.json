@@ -9,11 +9,17 @@
         "sdk"
     ],
     "license": "MIT",
+    "homepage": "https://github.com/treeshainfotech/laravel-vapi",
     "authors": [
         {
-            "name": "Treesha Infotech"
+            "name": "Treesha Infotech",
+            "homepage": "https://github.com/treeshainfotech"
         }
     ],
+    "support": {
+        "issues": "https://github.com/treeshainfotech/laravel-vapi/issues",
+        "source": "https://github.com/treeshainfotech/laravel-vapi"
+    },
     "require": {
         "php": "^8.3",
         "guzzlehttp/guzzle": "^7.8",

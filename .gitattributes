@@ -5,3 +5,5 @@
 /phpstan.neon.dist export-ignore
 /phpunit.xml export-ignore
 /pint.json export-ignore
+/CONTRIBUTING.md export-ignore
+/bin export-ignore
