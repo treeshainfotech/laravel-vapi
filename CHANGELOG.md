@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-10-13
+
 ### Added
 
 - Support for `guzzlehttp/guzzle` 8 alongside 7, via `^7.8 || ^8.0`. Laravel 13 accepts
@@ -64,6 +66,7 @@ Initial release: a Laravel wrapper around the official
   setters and required fields exposed as `make()` arguments.
 - `Vapi::fake()` testing helper with request recording and assertions.
 
-[Unreleased]: https://github.com/treeshainfotech/laravel-vapi/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/treeshainfotech/laravel-vapi/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/treeshainfotech/laravel-vapi/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/treeshainfotech/laravel-vapi/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/treeshainfotech/laravel-vapi/releases/tag/v0.1.0
