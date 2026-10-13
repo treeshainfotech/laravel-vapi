@@ -1,0 +1,69 @@
+name: security
+
+on:
+  schedule:
+    # Mondays, 06:00 UTC — before the weekly Dependabot run.
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+  push:
+    paths:
+      - composer.json
+      - .github/workflows/security.yml
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    name: composer audit
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          coverage: none
+
+      # composer.lock is not committed (this is a library), so Dependabot only
+      # sees the constraints in composer.json and never the resolved tree. This
+      # resolves fresh and audits what actually gets installed.
+      - name: Install dependencies
+        run: composer update --prefer-dist --no-interaction --no-progress
+
+      - name: Audit
+        id: audit
+        run: composer audit --format=plain | tee audit.txt
+
+      - name: Open an issue on failure
+        if: failure() && github.event_name == 'schedule'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = 'Security advisory in dependencies';
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'security',
+            });
+            if (existing.data.some(i => i.title === title)) return;
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              labels: ['security'],
+              body: [
+                '`composer audit` reported an advisory on the weekly run.',
+                '',
+                `[View the run](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`,
+                '',
+                'Advisories in transitive Laravel dependencies are usually resolved by',
+                'an upstream release; this package only needs a change when the',
+                'affected package is one it requires directly.',
+              ].join('\n'),
+            });
